@@ -1,9 +1,16 @@
 namespace CampaignCalculatorApp;
 
 using System;
+using System.Linq;
 
 public class CampaignCalculatorService
 {
+    private readonly Products products;
+
+    public CampaignCalculatorService(Products products)
+    {
+        this.products = products ?? throw new ArgumentNullException(nameof(products));
+    }
     public double GetPrice(string[] eanNumbers)
     {
         var products = this.ConvertToProducts(eanNumbers);
@@ -16,7 +23,7 @@ public class CampaignCalculatorService
 
             var comboItem = products.Find(x => x.ComboCategory == item.ComboCategory);
 
-            if (comboItem == null)
+            if (comboItem == null || item.ComboCategory == null)
             {
                 processedProducts.Add(item with { CalculatedPrice = item.OriginalPrice });
             }
@@ -31,8 +38,17 @@ public class CampaignCalculatorService
         return processedProducts.Sum(x => x.CalculatedPrice);
     }
 
-    private List<Product> ConvertToProducts(string[] eANNumbers)
+    private List<Product> ConvertToProducts(string[] eanNumbers)
     {
-        return new List<Product>();
+        var products = new List<Product>();
+        foreach (var eanNumber in eanNumbers)
+        {
+            if (!this.products.Values.Any(x => x.EAN == eanNumber))
+            {
+                throw new ArgumentException($"Could not find any product in database with code: {eanNumber}");
+            }
+            products.Add(this.products.Values.Single(x => x.EAN == eanNumber));
+        }
+        return products;
     }
 }

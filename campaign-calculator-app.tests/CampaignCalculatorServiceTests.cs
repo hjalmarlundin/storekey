@@ -1,7 +1,8 @@
-using Xunit;
-using FluentAssertions;
-
 namespace CampaignCalculatorApp.Tests;
+
+using FluentAssertions;
+using Xunit;
+using System;
 
 public class CampaignCalculatorServiceTests
 {
@@ -12,10 +13,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "UnknownEAN" });
-
-        // Assert
-        result.Should().Be(5.0);
+        Assert.Throws<ArgumentException>(() => sut.GetPrice(new[] { "UnknownEAN", "Combo1" }));
     }
 
     [Fact]
@@ -67,7 +65,7 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "Combo4" });
 
         // Assert
-        result.Should().Be(60.0);
+        result.Should().Be(70.0);
     }
 
     [Fact]
@@ -80,7 +78,7 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "NonCombo1", "NonCombo2", "Combo2" });
 
         // Assert
-        result.Should().Be(70.0);
+        result.Should().Be(80.0);
     }
 
     [Fact]
@@ -93,7 +91,7 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3" });
 
         // Assert
-        result.Should().Be(50.0);
+        result.Should().Be(60.0);
     }
 
     [Fact]
@@ -106,8 +104,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "NonCombo1", "NonCombo2" });
 
         // Assert
-        result.Should().Be(90.0);
+        result.Should().Be(110.0);
     }
 
-    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService();
+    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new Products());
 }
