@@ -107,5 +107,44 @@ public class CampaignCalculatorServiceTests
         result.Should().Be(110.0);
     }
 
+    [Fact]
+    public void Volume_correct_quantity_should_get_discount()
+    {
+        // Arrange
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1" });
+
+        // Assert
+        result.Should().Be(40.0);
+    }
+
+    [Fact]
+    public void Volume_an_additional_item_does_not_give_discount()
+    {
+        // Arrange
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1" });
+
+        // Assert
+        result.Should().Be(70.0);
+    }
+
+    [Fact]
+    public void Volume_two_different_items_both_gets_discount()
+    {
+        // Arrange
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume2", "Volume2", "Volume2", "NonVolume1" });
+
+        // Assert
+        result.Should().Be(155.0);
+    }
+
     private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new Products());
 }
