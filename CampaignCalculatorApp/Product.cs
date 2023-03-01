@@ -2,13 +2,13 @@ namespace CampaignCalculatorApp;
 
 public record Product
 {
-    public double OriginalPrice { get; set; }
+    public double OriginalPrice { get; init; }
 
-    public string EAN { get; set; }
+    public string EAN { get; init; }
 
     public double ComboPrice { get; set; }
 
-    public string ComboCategory { get; set; }
+    public string ComboCategory { get; set; } = null!;
 
     public double VolumePrice { get; set; }
 

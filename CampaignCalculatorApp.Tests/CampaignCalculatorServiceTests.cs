@@ -1,8 +1,9 @@
 namespace CampaignCalculatorApp.Tests;
 
+using System;
+using CampaignCalculatorApp;
 using FluentAssertions;
 using Xunit;
-using System;
 
 public class CampaignCalculatorServiceTests
 {
@@ -134,6 +135,19 @@ public class CampaignCalculatorServiceTests
     }
 
     [Fact]
+    public void Volume_two_sets_both_gets_discount()
+    {
+        // Arrange
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1", "Volume1" });
+
+        // Assert
+        result.Should().Be(80.0);
+    }
+
+    [Fact]
     public void Volume_two_different_items_both_gets_discount()
     {
         // Arrange
@@ -146,5 +160,5 @@ public class CampaignCalculatorServiceTests
         result.Should().Be(155.0);
     }
 
-    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new Products());
+    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new FakeProducts());
 }

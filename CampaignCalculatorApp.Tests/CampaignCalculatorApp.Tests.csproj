@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\campaign-calculator-app\campaign-calculator-app.csproj" />
+    <ProjectReference Include="..\CampaignCalculatorApp\CampaignCalculatorApp.csproj" />
   </ItemGroup>
 
 </Project>
