@@ -1,7 +1,6 @@
 namespace CampaignCalculatorApp.Tests;
 
 using CampaignCalculatorApp;
-using System;
 using System.Collections.Generic;
 
 public class FakeProducts : IProductRepository
@@ -18,8 +17,7 @@ public class FakeProducts : IProductRepository
             new Product() { EAN = "NonCombo2", OriginalPrice = 30 },
             new Product() { EAN = "Volume1", OriginalPrice = 30, VolumePrice = 20, VolumeQuantity = 2 },
             new Product() { EAN = "Volume2", OriginalPrice = 40, VolumePrice = 30, VolumeQuantity = 3 },
-            new Product() { EAN = "NonVolume1", OriginalPrice = 25 },
-
+            new Product() { EAN = "StandardItem1", OriginalPrice = 25 },
         };
     }
 

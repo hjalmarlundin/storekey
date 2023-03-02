@@ -11,7 +11,8 @@ public class CampaignCalculatorService
     {
         this.products = products ?? throw new ArgumentNullException(nameof(products));
     }
-    public double GetPrice(string[] eanNumbers)
+
+    public CampaignProductResult GetPrice(string[] eanNumbers)
     {
         var products = this.ConvertToProducts(eanNumbers);
         var numberOfProducts = products.Count;
@@ -19,35 +20,38 @@ public class CampaignCalculatorService
 
         ProcessCombinationDiscounts(products, processedProducts);
 
-        products = ProcessVolumeDiscounts(products, processedProducts);
+        ProcessVolumeDiscounts(products, processedProducts);
 
         ProcessResidualProducts(products, processedProducts);
 
         if (processedProducts.Count != numberOfProducts)
         {
-            throw new Exception("Oh no");
+            throw new Exception("Expected the same number of products returned as received");
         }
 
-        return processedProducts.Sum(x => x.CalculatedPrice);
+        var campaignProductResult = new CampaignProductResult() { CalculatedPrice = processedProducts.Sum(x => x.CalculatedPrice), Products = processedProducts };
+        return campaignProductResult;
     }
 
     private static void ProcessResidualProducts(List<Product> products, List<Product> processedProducts)
     {
+        // These items does not have neither volume or combo discount.
         foreach (var item in products)
         {
             processedProducts.Add(item with { CalculatedPrice = item.OriginalPrice });
         }
     }
 
-    private static List<Product> ProcessVolumeDiscounts(List<Product> products, List<Product> processedProducts)
+    private static void ProcessVolumeDiscounts(List<Product> products, List<Product> processedProducts)
     {
+        // Volume discounts are calculated per EAN code
         foreach (var itemGroup in products.Where(x => x.VolumeQuantity > 0).GroupBy(y => y.EAN))
         {
-
             var product = itemGroup.First();
             var numberOfItemsWithTheSameEANCode = itemGroup.Count();
-            products = products.Except(itemGroup).ToList();
+            products.RemoveAll(x => x.EAN == product.EAN);
 
+            // There is not enough products to get any discount
             if (product.VolumeQuantity > numberOfItemsWithTheSameEANCode)
             {
                 for (int i = 0; i < numberOfItemsWithTheSameEANCode; i++)
@@ -57,6 +61,7 @@ public class CampaignCalculatorService
             }
             else
             {
+                // There is enough products to get discount, check how many of them should get it.
                 var numberOfItemsWithoutDiscount = numberOfItemsWithTheSameEANCode % product.VolumeQuantity;
                 var numberOfItemsWithDiscount = numberOfItemsWithTheSameEANCode - numberOfItemsWithoutDiscount;
                 for (int i = 0; i < numberOfItemsWithoutDiscount; i++)
@@ -69,23 +74,24 @@ public class CampaignCalculatorService
                 }
             }
         }
-
-        return products;
     }
 
     private static void ProcessCombinationDiscounts(List<Product> products, List<Product> processedProducts)
     {
+        // Process all items with combo category until empty
         while (products.Any(x => x.ComboCategory != null))
         {
-            var item = products[0];
+            var item = products.First(x => x.ComboCategory != null);
             products.Remove(item);
 
             var comboItem = products.Find(x => x.ComboCategory == item.ComboCategory);
 
+            // There is only one item in this category, do not give any discount
             if (comboItem == null)
             {
                 processedProducts.Add(item with { CalculatedPrice = item.OriginalPrice });
             }
+            // There is at least one more item, give discount
             else
             {
                 processedProducts.Add(item with { CalculatedPrice = item.ComboPrice });

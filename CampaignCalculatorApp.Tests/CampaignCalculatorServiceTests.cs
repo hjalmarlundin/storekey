@@ -1,6 +1,7 @@
 namespace CampaignCalculatorApp.Tests;
 
 using System;
+using System.Linq;
 using CampaignCalculatorApp;
 using FluentAssertions;
 using Xunit;
@@ -27,7 +28,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo1" });
 
         // Assert
-        result.Should().Be(30.0);
+        result.CalculatedPrice.Should().Be(30.0);
+        result.Products.Count().Should().Be(2);
     }
 
     [Fact]
@@ -40,7 +42,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2" });
 
         // Assert
-        result.Should().Be(30.0);
+        result.CalculatedPrice.Should().Be(30.0);
+        result.Products.Count().Should().Be(2);
     }
 
     [Fact]
@@ -53,7 +56,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "NonCombo1" });
 
         // Assert
-        result.Should().Be(40.0);
+        result.CalculatedPrice.Should().Be(40.0);
+        result.Products.Count().Should().Be(2);
     }
 
     [Fact]
@@ -66,7 +70,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "Combo4" });
 
         // Assert
-        result.Should().Be(70.0);
+        result.CalculatedPrice.Should().Be(70.0);
+        result.Products.Count().Should().Be(4);
     }
 
     [Fact]
@@ -79,7 +84,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "NonCombo1", "NonCombo2", "Combo2" });
 
         // Assert
-        result.Should().Be(80.0);
+        result.CalculatedPrice.Should().Be(80.0);
+        result.Products.Count().Should().Be(4);
     }
 
     [Fact]
@@ -92,7 +98,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3" });
 
         // Assert
-        result.Should().Be(60.0);
+        result.CalculatedPrice.Should().Be(60.0);
+        result.Products.Count().Should().Be(3);
     }
 
     [Fact]
@@ -105,7 +112,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "NonCombo1", "NonCombo2" });
 
         // Assert
-        result.Should().Be(110.0);
+        result.CalculatedPrice.Should().Be(110.0);
+        result.Products.Count().Should().Be(5);
     }
 
     [Fact]
@@ -118,7 +126,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Volume1", "Volume1" });
 
         // Assert
-        result.Should().Be(40.0);
+        result.CalculatedPrice.Should().Be(40.0);
+        result.Products.Count().Should().Be(2);
     }
 
     [Fact]
@@ -131,7 +140,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1" });
 
         // Assert
-        result.Should().Be(70.0);
+        result.CalculatedPrice.Should().Be(70.0);
+        result.Products.Count().Should().Be(3);
     }
 
     [Fact]
@@ -144,7 +154,8 @@ public class CampaignCalculatorServiceTests
         var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1", "Volume1" });
 
         // Assert
-        result.Should().Be(80.0);
+        result.CalculatedPrice.Should().Be(80.0);
+        result.Products.Count().Should().Be(4);
     }
 
     [Fact]
@@ -154,10 +165,25 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume2", "Volume2", "Volume2", "NonVolume1" });
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume2", "Volume2", "Volume2", "StandardItem1" });
 
         // Assert
-        result.Should().Be(155.0);
+        result.CalculatedPrice.Should().Be(155.0);
+        result.Products.Count().Should().Be(6);
+    }
+
+    [Fact]
+    public void List_with_both_volume_and_combo_works()
+    {
+        // Arrange
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Combo1", "Combo1", "StandardItem1" });
+
+        // Assert
+        result.Products.Count().Should().Be(5);
+        result.CalculatedPrice.Should().Be(95.0);
     }
 
     private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new FakeProducts());

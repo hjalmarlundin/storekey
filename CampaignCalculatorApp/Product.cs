@@ -15,5 +15,4 @@ public record Product
     public int VolumeQuantity { get; set; }
 
     public double CalculatedPrice { get; set; }
-
 }
