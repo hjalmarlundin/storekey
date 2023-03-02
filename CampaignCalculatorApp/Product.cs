@@ -4,11 +4,11 @@ public record Product
 {
     public double OriginalPrice { get; init; }
 
-    public string EAN { get; init; }
+    public string EAN { get; init; } = default!;
 
     public double ComboPrice { get; set; }
 
-    public string ComboCategory { get; set; } = null!;
+    public string ComboCategory { get; set; } = default!;
 
     public double VolumePrice { get; set; }
 
