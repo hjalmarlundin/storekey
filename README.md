@@ -8,5 +8,4 @@ Assumptions not specified in assignment:
 * There can be many diffrent combo campaign categories.
 * Two combo campaign item of the same EAN receives combo campaign discount.
 * Non existing product in "database" will cause throwing exception.
-* 
 
