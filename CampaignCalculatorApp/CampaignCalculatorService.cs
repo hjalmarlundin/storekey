@@ -17,9 +17,9 @@ public class CampaignCalculatorService
         var products = this.ConvertToProducts(eanNumbers);
         var comboProducts = products.OfType<ComboProduct>().ToList();
         var volumeProducts = products.OfType<VolumeProduct>().ToList();
-        var productsWithoutAnyDiscount = products.Except(comboProducts).Except(volumeProducts);
+        var productsWithoutAnyDiscount = products.Except(comboProducts).Except(volumeProducts).ToList();
 
-        if (products.Count != comboProducts.Count + volumeProducts.Count + productsWithoutAnyDiscount.Count())
+        if (products.Count != comboProducts.Count + volumeProducts.Count + productsWithoutAnyDiscount.Count)
         {
             throw new InvalidOperationException("Unexpected number of products after conversion to respective type");
         }

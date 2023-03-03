@@ -1,6 +1,7 @@
 # Calculate campaign price
 
-``` dotnet test ``` to run tests and validate functionality.
+``` dotnet test ``` or build docker file to validate functionality and run tests.
+CampaignCalculatorService.cs takes a array in EAN numbers as input and returns a result with the total price for said products and a list containing which products was used in the calculation.
 
 Assumptions not specified in assignment:
 * There exist items without combo campaign items or volume campaign items (Ordinary items).

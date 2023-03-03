@@ -1,1 +1,1 @@
-﻿Console.WriteLine("Hello, World, run dotnet test to validate functionality of this!");
+Console.WriteLine("This app does nothing");
