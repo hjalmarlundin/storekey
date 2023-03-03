@@ -186,5 +186,5 @@ public class CampaignCalculatorServiceTests
         result.CalculatedPrice.Should().Be(95.0);
     }
 
-    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new FakeProducts());
+    private static CampaignCalculatorService CreateSut() => new CampaignCalculatorService(new FakeProducts(), new ComboCalculator(), new VolumeCalculator());
 }

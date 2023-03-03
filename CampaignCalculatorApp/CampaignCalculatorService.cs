@@ -6,9 +6,13 @@ using System.Linq;
 public class CampaignCalculatorService
 {
     private readonly IProductRepository productRepository;
+    private readonly IComboCalculator comboCalculator;
+    private readonly IVolumeCalculator volumeCalculator;
 
-    public CampaignCalculatorService(IProductRepository products)
+    public CampaignCalculatorService(IProductRepository products, IComboCalculator comboCalculator, IVolumeCalculator volumeCalculator)
     {
+        this.volumeCalculator = volumeCalculator ?? throw new ArgumentNullException(nameof(volumeCalculator));
+        this.comboCalculator = comboCalculator ?? throw new ArgumentNullException(nameof(comboCalculator));
         this.productRepository = products ?? throw new ArgumentNullException(nameof(products));
     }
 
@@ -24,8 +28,8 @@ public class CampaignCalculatorService
             throw new InvalidOperationException("Unexpected number of products after conversion to respective type");
         }
 
-        var processedComboProducts = ProcessCombinationDiscounts(comboProducts);
-        var processedVolumeProducts = ProcessVolumeDiscounts(volumeProducts);
+        var processedComboProducts = this.comboCalculator.ProcessCombinationDiscounts(comboProducts);
+        var processedVolumeProducts = this.volumeCalculator.ProcessVolumeDiscounts(volumeProducts);
         var processedOrdinaryProdcuts = ProcessResidualProducts(productsWithoutAnyDiscount);
 
         var totalNumberOfProducts = processedComboProducts.Concat(processedVolumeProducts).Concat(processedOrdinaryProdcuts);
@@ -46,73 +50,6 @@ public class CampaignCalculatorService
         foreach (var item in products)
         {
             processedProducts.Add(item with { CalculatedPrice = item.OriginalPrice });
-        }
-
-        return processedProducts;
-    }
-
-    private static IEnumerable<Product> ProcessVolumeDiscounts(List<VolumeProduct> products)
-    {
-        var processedProducts = new List<Product>();
-
-        // Volume discounts are calculated per EAN code
-        foreach (var itemGroup in products.Where(x => x.VolumeQuantity > 0).GroupBy(y => y.EAN))
-        {
-            var product = itemGroup.First();
-            var numberOfItemsWithTheSameEANCode = itemGroup.Count();
-
-            // There is not enough products to get any discount, keep original price as new price.
-            if (product.VolumeQuantity > numberOfItemsWithTheSameEANCode)
-            {
-                for (int i = 0; i < numberOfItemsWithTheSameEANCode; i++)
-                {
-                    processedProducts.Add(product with { CalculatedPrice = product.OriginalPrice });
-                }
-            }
-            else
-            {
-                // There is enough products to get discount, check how many of them should get it.
-                var numberOfItemsWithoutDiscount = numberOfItemsWithTheSameEANCode % product.VolumeQuantity;
-                var numberOfItemsWithDiscount = numberOfItemsWithTheSameEANCode - numberOfItemsWithoutDiscount;
-                for (int i = 0; i < numberOfItemsWithoutDiscount; i++)
-                {
-                    processedProducts.Add(product with { CalculatedPrice = product.OriginalPrice });
-                }
-
-                for (int i = 0; i < numberOfItemsWithDiscount; i++)
-                {
-                    processedProducts.Add(product with { CalculatedPrice = product.VolumePrice });
-                }
-            }
-        }
-
-        return processedProducts;
-    }
-
-    private static IEnumerable<Product> ProcessCombinationDiscounts(List<ComboProduct> products)
-    {
-        var processedProducts = new List<Product>();
-
-        // Process all items with combo category until empty
-        while (products.Any())
-        {
-            var item = products[0];
-            products.Remove(item);
-            var comboItem = products.Find(x => x.ComboCategory == item.ComboCategory);
-
-            // There is only one item in this category, do not give any discount
-            if (comboItem == null)
-            {
-                processedProducts.Add(item with { CalculatedPrice = item.OriginalPrice });
-            }
-
-            // There is at least one more item, give discount
-            else
-            {
-                processedProducts.Add(item with { CalculatedPrice = item.ComboPrice });
-                processedProducts.Add(comboItem with { CalculatedPrice = comboItem.ComboPrice });
-                products.Remove(comboItem);
-            }
         }
 
         return processedProducts;
