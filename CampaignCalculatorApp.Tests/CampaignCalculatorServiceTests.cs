@@ -15,7 +15,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        Assert.Throws<ArgumentException>(() => sut.GetPrice(new[] { "UnknownEAN", "Combo1" }));
+        Assert.Throws<ArgumentException>(() => sut.CalculatePriceOnCheckout(new[] { "UnknownEAN", "Combo1" }));
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "Combo1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "Combo1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(30.0);
@@ -39,7 +39,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "Combo2" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "Combo2" });
 
         // Assert
         result.CalculatedPrice.Should().Be(30.0);
@@ -53,7 +53,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "NonCombo1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "NonCombo1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(40.0);
@@ -67,7 +67,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "Combo4" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "Combo2", "Combo3", "Combo4" });
 
         // Assert
         result.CalculatedPrice.Should().Be(70.0);
@@ -81,7 +81,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "NonCombo1", "NonCombo2", "Combo2" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "NonCombo1", "NonCombo2", "Combo2" });
 
         // Assert
         result.CalculatedPrice.Should().Be(80.0);
@@ -95,7 +95,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "Combo2", "Combo3" });
 
         // Assert
         result.CalculatedPrice.Should().Be(60.0);
@@ -109,7 +109,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Combo1", "Combo2", "Combo3", "NonCombo1", "NonCombo2" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Combo1", "Combo2", "Combo3", "NonCombo1", "NonCombo2" });
 
         // Assert
         result.CalculatedPrice.Should().Be(110.0);
@@ -123,7 +123,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Volume1", "Volume1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(40.0);
@@ -137,7 +137,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Volume1", "Volume1", "Volume1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(70.0);
@@ -151,7 +151,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume1", "Volume1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Volume1", "Volume1", "Volume1", "Volume1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(80.0);
@@ -165,7 +165,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Volume2", "Volume2", "Volume2", "StandardItem1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Volume1", "Volume1", "Volume2", "Volume2", "Volume2", "StandardItem1" });
 
         // Assert
         result.CalculatedPrice.Should().Be(155.0);
@@ -179,7 +179,7 @@ public class CampaignCalculatorServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.GetPrice(new[] { "Volume1", "Volume1", "Combo1", "Combo1", "StandardItem1" });
+        var result = sut.CalculatePriceOnCheckout(new[] { "Volume1", "Volume1", "Combo1", "Combo1", "StandardItem1" });
 
         // Assert
         result.Products.Count().Should().Be(5);
